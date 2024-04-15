@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "Hero.h"
+
 int main(int argc, char *argv[])
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
@@ -22,6 +24,8 @@ int main(int argc, char *argv[])
     qDebug() << "Finished";
 
     std::cout << "say what" << std::endl;
+
+    Hero r;
 
     return 1;
 }

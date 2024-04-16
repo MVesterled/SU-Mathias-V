@@ -1,6 +1,8 @@
 #ifndef FJENDE_H
 #define FJENDE_H
 #include <string>
+#include <QtSql>
+#include <QSqlDatabase>
 
 class Fjende
 {
@@ -19,10 +21,13 @@ public:
 
     void addEmemies();
 
+    void printEnemies();
+
 private:
     std::string mName;
     unsigned int mXpGain, mSkade;
     int mHp;
+    QSqlQuery mQuery;
 
 };
 

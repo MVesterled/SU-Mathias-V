@@ -4,7 +4,7 @@
 //default constructor
 Hero::Hero()
 {
-    mName = "Kurt";
+    mName = "Dummy";
     mXp = 0;
     mLevel = 1;
     mStyrke = 1;
@@ -61,10 +61,37 @@ bool Hero::isAlive(){
     return mHp < 0;
 }
 
+void Hero::printHeros(){
+    std::cout << "Heroes:" << std::endl;
+        mQuery.exec("SELECT * FROM hero"); // Hero er tabel.
+        qDebug() << "Antal heros:" << mQuery.size(); //printer antal tasks
+
+        //Printer
+        while (mQuery.next()) {
+            int id = mQuery.value(0).toInt();
+            int level = mQuery.value(1).toInt();
+            int styrke = mQuery.value(2).toInt();
+            int xp = mQuery.value(3).toInt();
+            int hp = mQuery.value(4).toInt();
+            QString name = mQuery.value(5).toString();
 
 
+            qDebug() << "Id:" << id << "Navn:" << name << "Level:" << level << "Styrke:" << styrke << "XP:" << xp << "HP:" << hp;
+        }
+}
 
 
+void Hero::saveHero(){
+    mQuery.prepare("INSERT INTO hero (level, styrke, xp, hp, name) VALUES (:level, :styrke, :xp, :hp, :name)");
+
+    // Sætter værdier
+    mQuery.bindValue(":level", mLevel); // Example level value
+    mQuery.bindValue(":styrke", mStyrke); // Example styrke value
+    mQuery.bindValue(":xp", mXp); // Example xp value
+    mQuery.bindValue(":hp", mHp); // Example hp value
+    mQuery.bindValue(":name", QString::fromStdString(mName)); // Example name value
+    mQuery.exec();
+}
 
 
 

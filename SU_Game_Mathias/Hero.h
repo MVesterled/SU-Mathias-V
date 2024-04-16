@@ -1,6 +1,8 @@
 #ifndef HERO_H
 #define HERO_H
 #include <string>
+#include <QtSql>
+#include <QSqlDatabase>
 
 
 class Hero
@@ -22,10 +24,16 @@ public:
 
     bool isAlive();
 
+    void printHeros();
+
+    void saveHero();
+
+
 private:
     std::string mName;
     unsigned int mXp, mLevel, mStyrke, mSkade;
     int mHp;
+    QSqlQuery mQuery;
 
 };
 

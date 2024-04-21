@@ -8,7 +8,6 @@ Hero::Hero()
     mXp = 0;
     mLevel = 1;
     mStyrke = 1;
-    mSkade = 1;
     mHp = 10;
 }
 
@@ -18,7 +17,6 @@ Hero::Hero(std::string navn){
     mXp = 0;
     mLevel = 1;
     mStyrke = 2;
-    mSkade = 1;
     mHp = 10;
 }
 
@@ -28,6 +26,7 @@ void Hero::addXp(int xp){
     if (mXp > mLevel*1000){
         mXp -= (mLevel*1000);
         addLevel(1);
+        std::cout << "TILLYKKE! Du er steget 1 level op" << std::endl << std::endl;
     }
 }
 
@@ -38,27 +37,9 @@ void Hero::addLevel(int level){
     mHp += 2;
 }
 
-//Funktion der tager skade
-void Hero::takeDamage(int damage){
-    mHp -= damage;
-    if (mHp < 1){
-
-    }
-}
-
-//Funktion der returnere den skade der skal gives
-int Hero::dealDamage(int damage){
-    return mStyrke;
-}
-
 //Funktion der gør klar til ny kamp
 void Hero::resetAfterFight(){
     mHp = 10+(mLevel*2-2);
-}
-
-//Tjekker om hero er i live
-bool Hero::isAlive(){
-    return mHp < 0;
 }
 
 void Hero::printHeros(){
@@ -93,8 +74,10 @@ void Hero::saveHero(){
     mQuery.exec();
 }
 
-
-
+void Hero::printHeroStats(){
+    std::cout << "Hero navn: " << mName << " Styrke: " << mStyrke << " Level: "
+              << mLevel << " HP: " << mHp << " XP: " << mXp << std::endl;
+}
 
 
 

@@ -3,30 +3,23 @@
 #include <string>
 #include <QtSql>
 #include <QSqlDatabase>
+#include "Karekter.h"
 
-class Fjende
+class Fjende : public Karekter
 {
 public:
     Fjende();
 
-    Fjende(std::string navn, int hp, unsigned int mXpGain, unsigned int mSkade);
-
-    unsigned int xpGain(int xp);
-
-    void takeDamage(int damage);
-
-    int dealDamage(int damage);
-
-    bool isAlive();
+    unsigned int getXpGain();
 
     void addEmemies();
 
     void printEnemies();
 
+    void setEnemyStats(unsigned int enemyIndeks);
+
 private:
-    std::string mName;
-    unsigned int mXpGain, mSkade;
-    int mHp;
+    unsigned int mXpGain;
     QSqlQuery mQuery;
 
 };

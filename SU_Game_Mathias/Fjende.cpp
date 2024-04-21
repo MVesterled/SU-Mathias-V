@@ -7,43 +7,24 @@ Fjende::Fjende()
     mName = "bot";
     mHp = 1;
     mXpGain = 1;
-    mSkade = 1;
+    mStyrke = 1;
 }
-
-//constructor med initilizer list
-Fjende::Fjende(std::string navn, int hp, unsigned int xpGain, unsigned int skade)
-    : mName(navn), mHp(hp), mXpGain(xpGain), mSkade(skade)
-{}
 
 //Funktion der returnere xp som hero skal have
-unsigned int Fjende::xpGain(int xp){
+unsigned int Fjende::getXpGain(){
     return mXpGain;
-}
-
-//Tager skade
-void Fjende::takeDamage(int damage){
-    mHp -= damage;
-}
-
-//Giver skade
-int Fjende::dealDamage(int damage){
-    return mSkade;
-}
-
-//Tjekker om fjende er i live
-bool Fjende::isAlive(){
-    return mHp < 0;
 }
 
 //Indsætter fjenderne i database
 void Fjende::addEmemies(){
     //Liste af enemies laves
     QList<QVariantList> enemies = {
-            {"Goblin", 100, 4, 1},
-            {"Cow", 200, 8, 2},
-            {"Wizard", 400, 20, 3},
-            {"Giant", 500, 20, 4},
-            {"Dragon", 3000, 100, 10} };
+            {"Goblin", 200, 4, 1},
+            {"Cow", 400, 8, 2},
+            {"Wizard", 700, 20, 3},
+            {"Giant", 1200, 20, 4},
+            {"Dragon", 3000, 100, 10},
+            {"Pungrotten (BJ-Kongen)", 9999, 10, 87}};
 
        //SQL statement forberedes
         mQuery.prepare("INSERT INTO enemies (name, xp_gain, hp, styrke) VALUES (:name, :xp_gain, :hp, :styrke)");
@@ -77,3 +58,37 @@ void Fjende::printEnemies(){
             qDebug() << "Id:" << id << "Navn:" << name << "Styrke:" << styrke << "XP_Gain:" << xpGain << "HP:" << hp;
         }
 }
+
+void Fjende::setEnemyStats(unsigned int enemyIndeks){
+    //Select der skal returnere alt data på given fjende
+    mQuery.prepare("SELECT name, xp_gain, hp, styrke FROM enemies WHERE id = :enemyIndeks;");
+    mQuery.bindValue(":enemyIndeks", enemyIndeks); //Binder id
+    mQuery.exec(); //Kører query
+
+    //assigner værdier
+    if (mQuery.next()) {
+            QString name = mQuery.value("name").toString();
+            int xpGain = mQuery.value("xp_gain").toInt();
+            int hp = mQuery.value("hp").toInt();
+            int styrke = mQuery.value("styrke").toInt();
+
+            mName = name.toStdString();
+            mXpGain = xpGain;
+            mHp = hp;
+            mStyrke = styrke;
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+

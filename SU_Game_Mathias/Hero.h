@@ -3,9 +3,10 @@
 #include <string>
 #include <QtSql>
 #include <QSqlDatabase>
+#include "Karekter.h"
 
 
-class Hero
+class Hero : public Karekter
 {
 public:
     Hero();
@@ -16,23 +17,16 @@ public:
 
     void addLevel(int level);
 
-    void takeDamage(int damage);
-
-    int dealDamage(int damage);
-
     void resetAfterFight();
-
-    bool isAlive();
 
     void printHeros();
 
     void saveHero();
 
+    void printHeroStats();
 
 private:
-    std::string mName;
-    unsigned int mXp, mLevel, mStyrke, mSkade;
-    int mHp;
+    unsigned int mXp, mLevel;
     QSqlQuery mQuery;
 
 };

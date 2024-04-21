@@ -13,17 +13,19 @@ public:
 
     Hero(std::string navn);
 
-    void addXp(int xp);
+    void addXp(int xp);         //tilføjer xp til hero
 
-    void addLevel(int level);
+    void addLevel(int level);   //tilføjer level til hero
 
-    void resetAfterFight();
+    void resetAfterFight();     //Resetter hp efter kamp
 
-    void printHeros();
+    void printHeros();          //Printer heros
 
-    void saveHero();
+    void saveHero();            //Gemmer hero
 
-    void printHeroStats();
+    void printHeroStats();      //Printer hero stats
+
+    void loadHero(int heroNumber);  //Loader hero
 
 private:
     unsigned int mXp, mLevel;

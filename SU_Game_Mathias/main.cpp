@@ -7,6 +7,7 @@
 #include "Hero.h"
 #include "Fjende.h"
 
+//Funktion der skal vente på enter tryk
 void waitForEnter() {
     std::cout << "Tryk 'enter' for at slås";
     std::cin.ignore();
@@ -15,11 +16,12 @@ void waitForEnter() {
 
 int main(int argc, char *argv[])
 {
+    //SQL forbindelse:
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName("localhost");
-    db.setDatabaseName("Game");
-    db.setUserName("sammy");  // Change to username
-    db.setPassword("password");  // Change to password
+    db.setDatabaseName("Game"); //Databasenavn
+    db.setUserName("sammy");  // brugernavn
+    db.setPassword("password");  // kode
     db.open();
     QSqlQuery query;
 
@@ -27,14 +29,14 @@ int main(int argc, char *argv[])
     QString createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS Game";
     query.exec(createDatabaseQuery);
 
-    //Laver tabel til heros
+    //Laver tabel til heros (unik nøgle til navnet)
     QString createTableQuery1 = "CREATE TABLE IF NOT EXISTS hero ("
                                 "id INT AUTO_INCREMENT PRIMARY KEY,"
                                 "level INT,"
                                 "styrke INT,"
                                 "xp INT,"
                                 "hp INT,"
-                                "name VARCHAR(255)"
+                                "name VARCHAR(255) UNIQUE"
                                 ")";
     query.exec(createTableQuery1);
 
@@ -48,14 +50,15 @@ int main(int argc, char *argv[])
                                    "styrke INT"
                                    ")";
     query.exec(createTableQuery2);
-    int gameStatus{0};
-    int eventyrStatus{0};
-    int fjende{0};
-    std::string heroNavn;
-    Hero newHero;
-    Hero hData;
-    Fjende fData;
-    fData.addEmemies();
+    int gameStatus{0};          //int til spil-status
+    int eventyrStatus{0};       //int til eventyr-status
+    int fjende{0};              //int til fjende-valg
+    int heroLoad{0};            //int til hero-valg
+    std::string heroNavn;       //string til hero-navn
+    Hero newHero;               //Hero der spilles med
+    Hero hData;                 //dummy hero
+    Fjende fData;               //dummy fjende
+    fData.addEmemies();         //tilføjelse af fjender
 
     while (true){
 
@@ -79,8 +82,10 @@ int main(int argc, char *argv[])
            case 2: //Vælg eksisterende hero
                hData.printHeros();
                std::cout << "Vælg din Hero vha. indeks/id" << std::endl;
+               std::cin >> heroLoad;
+               newHero.loadHero(heroLoad);
                std::cout << std::endl;
-               gameStatus = 0;
+               gameStatus = 3;
                break;
            case 3: //Klar til kamp eller luk spil?
                std::cout << "Muligheder:" << std::endl;
@@ -99,14 +104,14 @@ int main(int argc, char *argv[])
                    std::cout << std::endl;
                    gameStatus = 4;
                }
-               else if (eventyrStatus == 2){
+               else if (eventyrStatus == 2){ //gemmer hero
                    newHero.saveHero();
                    gameStatus = 0;
                }
-               else if (eventyrStatus == 3){
+               else if (eventyrStatus == 3){ //lukker spil uden at gemme
                    gameStatus = 0;
                }
-               else if (eventyrStatus == 4){
+               else if (eventyrStatus == 4){ //printer hero stats
                    newHero.printHeroStats();
                    gameStatus = 3;
                }
@@ -119,18 +124,19 @@ int main(int argc, char *argv[])
            case 4: //Slåskamp
                 std::cout << "FIGHT!" << std::endl;
                 fData.setEnemyStats(fjende);
+                //så længe en karekter er i live kan de slås:
                 while (newHero.isAlive() && fData.isAlive()){
                     std::cout << "Hero: " << newHero.getName() << " har hp: " << newHero.getHp() << std::endl;
                     std::cout << "Fjende: " << fData.getName() << " har hp: " << fData.getHp() << std::endl;
                     waitForEnter();
                     fData.takeDamage(newHero.getDamage());
                     newHero.takeDamage(fData.getDamage());
-                    if (!newHero.isAlive()){
+                    if (!newHero.isAlive()){ //hvis hero dør
                         std::cout << "Du tabte..." << std::endl << std::endl;
                         newHero.resetAfterFight();
                         gameStatus = 3;
                         break;}
-                    else if(!fData.isAlive())    {
+                    else if(!fData.isAlive()){ //hvis enemy dør
                         std::cout << "Du vandt kampen!" << std::endl << std::endl;
                         newHero.resetAfterFight();
                         newHero.addXp((fData.getXpGain()));

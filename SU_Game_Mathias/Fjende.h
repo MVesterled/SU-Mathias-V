@@ -10,13 +10,13 @@ class Fjende : public Karekter
 public:
     Fjende();
 
-    unsigned int getXpGain();
+    unsigned int getXpGain();       //Getter funktion til xp_gain
 
-    void addEmemies();
+    void addEmemies();              //Tilføjer fjender
 
-    void printEnemies();
+    void printEnemies();            //Printer fjender
 
-    void setEnemyStats(unsigned int enemyIndeks);
+    void setEnemyStats(unsigned int enemyIndeks);       //Sætter den valgte enemies stats
 
 private:
     unsigned int mXpGain;

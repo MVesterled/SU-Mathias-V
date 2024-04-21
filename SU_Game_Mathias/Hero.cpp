@@ -42,6 +42,7 @@ void Hero::resetAfterFight(){
     mHp = 10+(mLevel*2-2);
 }
 
+//Funktion der printer heroes
 void Hero::printHeros(){
     std::cout << "Heroes:" << std::endl;
         mQuery.exec("SELECT * FROM hero"); // Hero er tabel.
@@ -61,9 +62,15 @@ void Hero::printHeros(){
         }
 }
 
-
+//Funktion der gemmer hero
 void Hero::saveHero(){
-    mQuery.prepare("INSERT INTO hero (level, styrke, xp, hp, name) VALUES (:level, :styrke, :xp, :hp, :name)");
+    mQuery.prepare("INSERT INTO hero (level, styrke, xp, hp, name) "
+                   "VALUES (:level, :styrke, :xp, :hp, :name) "
+                   "ON DUPLICATE KEY UPDATE "
+                   "level = :level, "
+                   "styrke = :styrke, "
+                   "xp = :xp, "
+                   "hp = :hp");
 
     // Sætter værdier
     mQuery.bindValue(":level", mLevel); // Example level value
@@ -72,6 +79,7 @@ void Hero::saveHero(){
     mQuery.bindValue(":hp", mHp); // Example hp value
     mQuery.bindValue(":name", QString::fromStdString(mName)); // Example name value
     mQuery.exec();
+
 }
 
 void Hero::printHeroStats(){
@@ -79,7 +87,29 @@ void Hero::printHeroStats(){
               << mLevel << " HP: " << mHp << " XP: " << mXp << std::endl;
 }
 
+//Funktion der loader hero
+void Hero::loadHero(int heroNumber){
+    //Select der skal returnere alt data på given fjende
+    mQuery.prepare("SELECT level, styrke, xp, hp, name FROM hero WHERE id = :heroNumber;");
+    mQuery.bindValue(":heroNumber", heroNumber); //Binder id
+    mQuery.exec(); //Kører query
 
+    //assigner værdier
+    if (mQuery.next()) {
+            int level = mQuery.value("level").toInt();
+            QString name = mQuery.value("name").toString();
+            int xp = mQuery.value("xp").toInt();
+            int hp = mQuery.value("hp").toInt();
+            int styrke = mQuery.value("styrke").toInt();
+
+            mName = name.toStdString();
+            mXp = xp;
+            mHp = hp;
+            mStyrke = styrke;
+            mLevel = level;
+
+        }
+}
 
 
 

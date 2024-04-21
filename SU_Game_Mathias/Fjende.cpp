@@ -40,6 +40,7 @@ void Fjende::addEmemies(){
 
 }
 
+//Funktion der printer enemies
 void Fjende::printEnemies(){
     std::cout << "Fjender:" << std::endl;
         mQuery.exec("SELECT * FROM enemies"); // Hero er tabel.
@@ -59,6 +60,7 @@ void Fjende::printEnemies(){
         }
 }
 
+//Funktion der sætter enemy stats til de valgte stats
 void Fjende::setEnemyStats(unsigned int enemyIndeks){
     //Select der skal returnere alt data på given fjende
     mQuery.prepare("SELECT name, xp_gain, hp, styrke FROM enemies WHERE id = :enemyIndeks;");

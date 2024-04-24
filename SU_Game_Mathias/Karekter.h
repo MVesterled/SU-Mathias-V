@@ -7,13 +7,16 @@ class Karekter
 {
 public:
     Karekter();
-    std::string getName();
+    std::string getName() const;
+    void setName(std::string& name);
 
-    int getHp();
+    int getHp() const;
+    void setHp(int hp);
 
     bool isAlive();
 
-    unsigned int getDamage();
+    unsigned int getDamage() const;
+    void setDamage(unsigned int styrke);
 
     void takeDamage(int damage);
 

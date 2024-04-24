@@ -5,12 +5,20 @@ Karekter::Karekter()
  mName = "";
 }
 
-std::string Karekter::getName(){
+std::string Karekter::getName() const{
     return mName;
 }
 
-int Karekter::getHp(){
+void Karekter::setName(std::string& name){
+    mName = name;
+}
+
+int Karekter::getHp() const{
     return mHp;
+}
+
+void Karekter::setHp(int hp){
+    mHp = hp;
 }
 
 //Tjekker om Karekter er i live
@@ -19,8 +27,12 @@ bool Karekter::isAlive(){
 }
 
 //Funktion der returnere den skade der skal gives
-unsigned int Karekter::getDamage(){
+unsigned int Karekter::getDamage() const{
     return mStyrke;
+}
+
+void Karekter::setDamage(unsigned int styrke){
+    mStyrke = styrke;
 }
 
 //Funktion der tager skade

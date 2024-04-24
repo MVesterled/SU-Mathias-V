@@ -19,13 +19,12 @@ public:
 
     void resetAfterFight();     //Resetter hp efter kamp
 
-    void printHeros();          //Printer heros
 
-    void saveHero();            //Gemmer hero
+    unsigned int getXp() const;
+    void setXp(unsigned int xp);
 
-    void printHeroStats();      //Printer hero stats
-
-    void loadHero(int heroNumber);  //Loader hero
+    unsigned int getLevel() const;
+    void setLevel(unsigned int level);
 
 private:
     unsigned int mXp, mLevel;

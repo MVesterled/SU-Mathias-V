@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     int eventyrStatus{0};       //int til eventyr-status
     int fjende{0};              //int til fjende-valg
     int heroLoad{0};            //int til hero-valg
+    int grotte{0};              //int til grotte-valg
     std::string heroNavn;       //string til hero-navn
     Hero myHero;               //Hero der spilles med
     Fjende enemy;               //Fjende
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
                std::cout << "(2) Luk eventyr og GEM Hero" << std::endl;
                std::cout << "(3) Luk eventyr uden at gemme" << std::endl;
                std::cout << "(4) Vis Hero-stats" << std::endl;
+               std::cout << "(5) Vis Grotter der kan spilles" << std::endl;
 
                std::cin >> eventyrStatus;
                std::cout << std::endl;
@@ -94,6 +96,13 @@ int main(int argc, char *argv[])
                    Game.printHeroStats();
                    gameStatus = 3;
                }
+               else if (eventyrStatus == 5){ //printer grotter
+                   Game.printGrotter();
+                   std::cout << "Indtast valg vha. indeks" << std::endl;
+                   std::cin >> grotte;
+                   std::cout << std::endl;
+                   gameStatus = 5;
+               }
                else {
                    std::cout << "Forkert valg, prøv igen" << std::endl;
                    std::cin >> eventyrStatus;
@@ -103,7 +112,13 @@ int main(int argc, char *argv[])
            case 4: //Slåskamp
                 std::cout << "FIGHT!" << std::endl;
                gameStatus = Game.fight(fjende);
+               if (gameStatus == 99)
+                   gameStatus = 3;
                 break;
+            case 5: //Grotte
+                 gameStatus = Game.fightCave(grotte);
+                break;
+
            default:
                std::cout << "Du valgte et ugyldigt tal, prøv igen!" << std::endl;
                std::cout << std::endl;

@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 #include "Hero.h"
 #include "Fjende.h"
+#include "Grotte.h"
 #include <string>
 #include <QtSql>
 #include <QSqlDatabase>
@@ -27,11 +28,16 @@ public:
 
     int fight(int enemyNumber);
 
+    void printGrotter();
+
+    int fightCave(int caveNumber);
+
     void setHero(Hero hero);
 
 private:
     Hero mHero;
     Fjende mFjende;
+    Grotte mGrotte;
     QSqlQuery mQuery;
 };
 

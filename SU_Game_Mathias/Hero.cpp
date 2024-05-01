@@ -6,6 +6,7 @@ Hero::Hero()
 {
     mName = "Dummy";
     mXp = 0;
+    mGold = 0;
     mLevel = 1;
     mStyrke = 1;
     mHp = 10;
@@ -15,6 +16,7 @@ Hero::Hero()
 Hero::Hero(std::string navn){
     mName = navn;
     mXp = 0;
+    mGold = 0;
     mLevel = 1;
     mStyrke = 2;
     mHp = 10;
@@ -62,7 +64,17 @@ void Hero::setLevel(unsigned int level){
     mLevel = level;
 }
 
+unsigned int Hero::getGold() const{
+    return mGold;
+}
 
+void Hero::adjustGold(int gold){
+    mGold += gold;
+}
+
+void Hero::setGold(int gold){
+    mGold = gold;
+}
 
 
 

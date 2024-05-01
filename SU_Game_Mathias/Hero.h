@@ -26,8 +26,12 @@ public:
     unsigned int getLevel() const;
     void setLevel(unsigned int level);
 
+    unsigned int getGold() const;
+    void adjustGold(int gold);
+    void setGold(int gold);
+
 private:
-    unsigned int mXp, mLevel;
+    unsigned int mXp, mLevel, mGold;
     QSqlQuery mQuery;
 
 };

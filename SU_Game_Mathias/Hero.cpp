@@ -68,6 +68,7 @@ unsigned int Hero::getGold() const{
     return mGold;
 }
 
+//justerer goldmængde
 void Hero::adjustGold(int gold){
     mGold += gold;
 }

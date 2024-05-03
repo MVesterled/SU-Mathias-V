@@ -12,11 +12,11 @@ class Grotte
 public:
     Grotte();
 
-    void loadGrotteFjender(const unsigned int grotteNr);
+    void loadGrotteFjender(const unsigned int grotteNr); //henter fjender fra database
 
-    void loadGrotteData(const unsigned int grotteNr);
+    void loadGrotteData(const unsigned int grotteNr); //henter data (gold og navn)
 
-    Fjende getFjende(const unsigned int fjendeNr) const;
+    Fjende getFjende(const unsigned int fjendeNr) const; //returner fjende
 
     int getGold() const;
     std::string getName() const;

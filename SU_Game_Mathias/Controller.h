@@ -26,11 +26,11 @@ public:
 
     void printEnemies();            //Printer fjender
 
-    int fight(int enemyNumber);
+    int fight(int enemyNumber);     //håndterer slåskamp
 
-    void printGrotter();
+    void printGrotter();                //printer grotter
 
-    int fightCave(int caveNumber);
+    int fightCave(int caveNumber);      //håndterer en grottekørsel
 
     void setHero(Hero hero);
 

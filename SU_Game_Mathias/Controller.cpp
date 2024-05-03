@@ -28,7 +28,7 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    "DROP TABLE IF EXISTS grotter; "
                                    "CREATE TABLE grotter ("
                                    "grotte_id INT PRIMARY KEY AUTO_INCREMENT,"
-                                   "name VARCHAR(50),"
+                                   "name VARCHAR(255),"
                                    "gold INT"
                                    ")";
     mQuery.exec(createTableQuery2);
@@ -196,6 +196,7 @@ void Controller::addEmemies(){
 
 }
 
+//funktion der håndterer en kamp mellem fjende og hero
 int Controller::fight(int enemyNumber){
     mFjende.setEnemyStats(enemyNumber);
     //så længe en karekter er i live kan de slås:
@@ -221,6 +222,7 @@ int Controller::fight(int enemyNumber){
     return -1;
 }
 
+//printer mulige grotter
 void Controller::printGrotter(){
     std::cout << "Grotter:" << std::endl;
         mQuery.exec("SELECT * FROM grotter"); // grotter er tabel.
@@ -236,6 +238,7 @@ void Controller::printGrotter(){
         }
 }
 
+//funktion der håndterer en grottekørsel (3 monstre)
 int Controller::fightCave(int caveNumber){
     mGrotte.loadGrotteData(caveNumber);
     mGrotte.loadGrotteFjender(caveNumber);

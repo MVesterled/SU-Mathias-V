@@ -10,6 +10,7 @@ Hero::Hero()
     mLevel = 1;
     mStyrke = 1;
     mHp = 10;
+    mMana = 10;
 }
 
 //constructor med navn
@@ -20,6 +21,7 @@ Hero::Hero(std::string navn){
     mLevel = 1;
     mStyrke = 2;
     mHp = 10;
+    mMana = 10;
 }
 
 //Funktion der giver hero xp
@@ -37,6 +39,7 @@ void Hero::addLevel(int level){
     mLevel += level;
     mStyrke += 1;
     mHp += 2;
+    mMana += 2;
 }
 
 //Funktion der gør klar til ny kamp

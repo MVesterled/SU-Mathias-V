@@ -22,10 +22,11 @@ Controller::Controller(Hero hero, Fjende fjende)
                                 ")";
     mQuery.exec(createTableQuery1);
 
+    QString dropFkKey = "ALTER TABLE enemies DROP FOREIGN KEY enemies_ibfk_1; ";
+    mQuery.exec(dropFkKey);
 
     //Laver tabel til grotter
-    QString createTableQuery2 = "ALTER TABLE enemies DROP FOREIGN KEY enemies_ibfk_1; "
-                                   "DROP TABLE IF EXISTS grotter; "
+    QString createTableQuery2 =    "DROP TABLE IF EXISTS grotter; "
                                    "CREATE TABLE grotter ("
                                    "grotte_id INT PRIMARY KEY AUTO_INCREMENT,"
                                    "name VARCHAR(255),"
@@ -45,6 +46,21 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    "FOREIGN KEY(grotte_id) REFERENCES grotter(grotte_id)"
                                    ")";
     mQuery.exec(createTableQuery3);
+
+    //Laver tabel til magier
+    QString createTableQuery4 = "DROP TABLE IF EXISTS magier; "
+                                   "CREATE TABLE magier ("
+                                   "magi_id INT AUTO_INCREMENT PRIMARY KEY,"
+                                   "name VARCHAR(255),"
+                                   "styrke INT,"
+                                   "selv_styrke INT,"
+                                   "mana_pris INT,"
+                                   "element VARCHAR(255),"
+                                   "guld_pris INT,"
+                                   "magi_krav INT,"
+                                   "FOREIGN KEY(magi_krav) REFERENCES magier(magi_id)"
+                                   ")";
+    mQuery.exec(createTableQuery4);
 
     //Liste af grotter laves
     QList<QVariantList> grotter = {
@@ -262,4 +278,32 @@ int Controller::fightCave(int caveNumber){
 
 void Controller::setHero(Hero hero){
     mHero = hero;
+}
+
+//tilføjelser af magier til databasen
+void Controller::addMagi(){
+    // Liste af magi laves
+    QList<QVariantList> magier = {
+        {"FireBall", 8, 3, 3, "ild", 750},
+        {"WaterWave", 6, 1, 2, "vand", 500},
+        {"EarthBlast", 9, 2, 4, "jord", 1000}
+    };
+
+    // SQL statement forberedes
+    mQuery.prepare("INSERT INTO magier (name, styrke, selv_styrke, mana_pris, element, guld_pris) "
+                   "VALUES (:name, :styrke, :selv_styrke, :mana_pris, :element, :guld_pris)");
+
+    for (const QVariantList& magi : magier) {
+        mQuery.bindValue(":name", magi[0]);
+        mQuery.bindValue(":styrke", magi[1]);
+        mQuery.bindValue(":selv_styrke", magi[2]);
+        mQuery.bindValue(":mana_pris", magi[3]);
+        mQuery.bindValue(":element", magi[4]);
+        mQuery.bindValue(":guld_pris", magi[5]);
+
+
+        if (!mQuery.exec()) {
+            qDebug() << "Fejl under udførelse af INSERT forespørgsel:" << mQuery.lastError().text();
+        }
+    }
 }

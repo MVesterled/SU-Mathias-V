@@ -4,6 +4,8 @@
 #include <QtSql>
 #include <QSqlDatabase>
 #include "Karekter.h"
+#include <vector>
+#include "Magi.h"
 
 
 class Hero : public Karekter
@@ -32,8 +34,9 @@ public:
 
 private:
     unsigned int mXp, mLevel, mGold;
+    int mMana;
     QSqlQuery mQuery;
-
+    std::vector<Magi> mMagi;
 };
 
 #endif // HERO_H

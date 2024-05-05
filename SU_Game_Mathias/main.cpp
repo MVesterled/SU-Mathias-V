@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     Fjende enemy;               //Fjende
     Controller Game(myHero, enemy);
     Game.addEmemies();         //tilføjelse af fjender
+    Game.addMagi();             //tilføjer magier
 
     while (true){
 

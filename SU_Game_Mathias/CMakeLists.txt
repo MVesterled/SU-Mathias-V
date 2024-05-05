@@ -16,7 +16,7 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_executable(SU_Game_Mathias
-  main.cpp Hero.h Hero.cpp Fjende.h Fjende.cpp Karekter.h Karekter.cpp Controller.h Controller.cpp Grotte.h Grotte.cpp
+  main.cpp Hero.h Hero.cpp Fjende.h Fjende.cpp Karekter.h Karekter.cpp Controller.h Controller.cpp Grotte.h Grotte.cpp Magi.h Magi.cpp
 )
 target_link_libraries(SU_Game_Mathias  Qt5::Core Qt5::Sql)
 target_link_libraries(SU_Game_Mathias Qt${QT_VERSION_MAJOR}::Core)

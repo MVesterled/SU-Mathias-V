@@ -34,6 +34,8 @@ public:
 
     void setHero(Hero hero);
 
+    void addMagi();
+
 private:
     Hero mHero;
     Fjende mFjende;

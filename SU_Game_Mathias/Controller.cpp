@@ -57,8 +57,7 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    "mana_pris INT,"
                                    "element VARCHAR(255),"
                                    "guld_pris INT,"
-                                   "magi_krav INT,"
-                                   "FOREIGN KEY(magi_krav) REFERENCES magier(magi_id)"
+                                   "magi_krav INT"
                                    ")";
     mQuery.exec(createTableQuery4);
 
@@ -134,6 +133,12 @@ void Controller::printHeroStats(){
     std::cout << "Hero navn: " << mHero.getName() << " Styrke: " << mHero.getDamage() << " Level: "
               << mHero.getLevel() << " HP: " << mHero.getHp() << " XP: "
               << mHero.getXp() << " Gold: " << mHero.getGold() << std::endl;
+    std::cout << "Magier:" << std::endl;
+    for (int i = 0; i < mHero.getMagi().size(); ++i){
+        std::cout << "MagiID: " << mHero.getMagi()[i].getID() << " " << "Navn: " << mHero.getMagi()[i].getName() << " " <<
+                     "Styrke: " << mHero.getMagi()[i].getStyrke() << " " << "SelvStyrke: " << mHero.getMagi()[i].getSelvStyrke() << " " <<
+                     "ManaPris: " << mHero.getMagi()[i].getManaPrice() << " " << "Element: " << mHero.getMagi()[i].getElement() << std::endl;
+    }
 }
 
 //Funktion der loader hero
@@ -281,17 +286,29 @@ void Controller::setHero(Hero hero){
 }
 
 //tilføjelser af magier til databasen
-void Controller::addMagi(){
+void Controller::addMagier(){
     // Liste af magi laves
     QList<QVariantList> magier = {
-        {"FireBall", 8, 3, 3, "ild", 750},
-        {"WaterWave", 6, 1, 2, "vand", 500},
-        {"EarthBlast", 9, 2, 4, "jord", 1000}
+        {"FireStrike", 4, 2, 2, "ild", 750, 0},
+        {"FireWave", 6, 2, 3, "ild", 500, 1},
+        {"FireBlast", 9, 3, 4, "ild", 1000, 2},
+        {"EarthStrike", 4, 2, 2, "Earth", 750, 0},
+        {"EarthWave", 6, 2, 3, "Earth", 500, 4},
+        {"EarthBlast", 9, 3, 4, "Earth", 1000, 5},
+        {"WaterStrike", 4, 2, 2, "Water", 750, 0},
+        {"WaterWave", 6, 2, 3, "Water", 500, 7},
+        {"WaterBlast", 9, 3, 4, "Water", 1000, 8},
+        {"RegenHP", 0, -5, 2, "Metal", 750, 0},
+        {"Sword", 6, 2, 3, "Metal", 500, 0},
+        {"Whip", 9, 3, 4, "Metal", 1000, 11},
+        {"RegenMana", 0, 0, -5, "Wood", 750, 0},
+        {"RootAttack", 6, 2, 3, "Wood", 500, 0},
+        {"StealHP", 4, -4, 2, "Wood", 1000, 0}
     };
 
     // SQL statement forberedes
-    mQuery.prepare("INSERT INTO magier (name, styrke, selv_styrke, mana_pris, element, guld_pris) "
-                   "VALUES (:name, :styrke, :selv_styrke, :mana_pris, :element, :guld_pris)");
+    mQuery.prepare("INSERT INTO magier (name, styrke, selv_styrke, mana_pris, element, guld_pris, magi_krav) "
+                       "VALUES (:name, :styrke, :selv_styrke, :mana_pris, :element, :guld_pris, :magi_krav)");
 
     for (const QVariantList& magi : magier) {
         mQuery.bindValue(":name", magi[0]);
@@ -300,10 +317,44 @@ void Controller::addMagi(){
         mQuery.bindValue(":mana_pris", magi[3]);
         mQuery.bindValue(":element", magi[4]);
         mQuery.bindValue(":guld_pris", magi[5]);
-
+        mQuery.bindValue(":magi_krav", magi[6]);
 
         if (!mQuery.exec()) {
             qDebug() << "Fejl under udførelse af INSERT forespørgsel:" << mQuery.lastError().text();
         }
     }
+}
+
+void Controller::magishop(){
+    std::cout << "Butikken består af:" << std::endl;
+        mQuery.exec("SELECT * FROM magier"); // grotter er tabel.
+        qDebug() << "Antal Produkter:" << mQuery.size(); //printer antal tasks
+
+        //Printer
+        while (mQuery.next()) {
+            int id = mQuery.value(0).toInt();
+            QString name = mQuery.value(1).toString();
+            int styrke = mQuery.value(2).toInt();
+            int selv_styrke = mQuery.value(3).toInt();
+            int mana_pris = mQuery.value(4).toInt();
+            QString element = mQuery.value(5).toString();
+            int guld_pris = mQuery.value(6).toInt();
+            int magi_krav = mQuery.value(7).toInt();
+
+            qDebug() << "Id:" << id << "Navn:" << name << "Styrke:" << styrke << "Selv_skade:" << selv_styrke
+                     << "Mana_Pris:" << mana_pris << "Element:" << element << "Guld_pris:" << guld_pris << "Magi_krav:" << magi_krav;
+        }
+
+        int magivalg{0};
+        std::cout << "Indtast valg vha. indeks eller 0 for at returnere" << std::endl;
+        std::cin >> magivalg;
+
+        if (mHero.buyMagic(magivalg) == 0){
+             std::cout << "Du havde ikke guld nok... Du føres tilbage til menu" << std::endl;
+        }
+        else {
+            std::cout << "Magi tilhøjet til: " << mHero.getName() << std::endl;
+        }
+
+
 }

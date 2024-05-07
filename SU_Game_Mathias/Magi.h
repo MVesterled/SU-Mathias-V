@@ -1,11 +1,16 @@
 #ifndef MAGI_H
 #define MAGI_H
 #include <string>
+#include <QtSql>
+#include <QSqlDatabase>
 
 class Magi
 {
 public:
-    Magi();
+    Magi(int id);
+
+    void setID(int id);
+    int getID() const;
 
     void setStyrke(int styrke);
     int getStyrke() const;
@@ -19,10 +24,13 @@ public:
     void setElement(std::string element);
     std::string getElement() const;
 
-private:
-    int mStyrke, mSelvStyrke, mManaPrice;
-    std::string mElement;
+    void setName(std::string name);
+    std::string getName() const;
 
+private:
+    int mID, mStyrke, mSelvStyrke, mManaPrice;
+    std::string mElement, mName;
+    QSqlQuery mQuery;
 
 };
 

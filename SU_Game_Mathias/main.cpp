@@ -33,12 +33,13 @@ int main(int argc, char *argv[])
     int fjende{0};              //int til fjende-valg
     int heroLoad{0};            //int til hero-valg
     int grotte{0};              //int til grotte-valg
+    int magivalg{0};            //int til magivalg
     std::string heroNavn;       //string til hero-navn
     Hero myHero;               //Hero der spilles med
     Fjende enemy;               //Fjende
     Controller Game(myHero, enemy);
     Game.addEmemies();         //tilføjelse af fjender
-    Game.addMagi();             //tilføjer magier
+    Game.addMagier();             //tilføjer magier
 
     while (true){
 
@@ -75,6 +76,7 @@ int main(int argc, char *argv[])
                std::cout << "(3) Luk eventyr uden at gemme" << std::endl;
                std::cout << "(4) Vis Hero-stats" << std::endl;
                std::cout << "(5) Vis Grotter der kan spilles" << std::endl;
+               std::cout << "(6) Gå til Magi-Shoppen" << std::endl;
 
                std::cin >> eventyrStatus;
                std::cout << std::endl;
@@ -103,6 +105,11 @@ int main(int argc, char *argv[])
                    std::cin >> grotte;
                    std::cout << std::endl;
                    gameStatus = 5;
+               }
+               else if (eventyrStatus == 6){ //printer grotter
+                   Game.magishop();
+                   std::cout << std::endl;
+                   gameStatus = 3;
                }
                else {
                    std::cout << "Forkert valg, prøv igen" << std::endl;

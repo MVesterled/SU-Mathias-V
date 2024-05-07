@@ -80,8 +80,33 @@ void Hero::setGold(int gold){
     mGold = gold;
 }
 
+int Hero::buyMagic(int magic){
+    //Select der skal returnere guld_pris på magi
+    mQuery.prepare("SELECT guld_pris FROM magier WHERE magi_id = :magic;");
+    mQuery.bindValue(":magic", magic); //Binder id
+    mQuery.exec(); //Kører query
 
+    //assigner værdier
+    if (mQuery.next()) {
+            int guld_pris = mQuery.value("guld_pris").toInt();
+            //std::cout << "Guldpris: " << guld_pris << " mGold: " << mGold << std::endl;
+            if (guld_pris > mGold){
+                return 0;
+            }
+            else {
+                mMagi.push_back(magic);
+                Hero::adjustGold(-guld_pris);
+                return 1;
+            }
 
+        }
+    return 0;
+
+}
+
+std::vector<Magi> Hero::getMagi() const{
+    return mMagi;
+}
 
 
 

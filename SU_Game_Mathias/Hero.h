@@ -32,6 +32,10 @@ public:
     void adjustGold(int gold);
     void setGold(int gold);
 
+    int buyMagic(int magic);
+
+    std::vector<Magi> getMagi() const;
+
 private:
     unsigned int mXp, mLevel, mGold;
     int mMana;

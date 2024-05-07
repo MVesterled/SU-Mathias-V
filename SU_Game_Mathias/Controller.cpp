@@ -47,6 +47,9 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    ")";
     mQuery.exec(createTableQuery3);
 
+    QString dropFkKey2 = "ALTER TABLE hero_magier DROP FOREIGN KEY hero_magier_ibfk_2";
+    mQuery.exec(dropFkKey2);
+
     //Laver tabel til magier
     QString createTableQuery4 = "DROP TABLE IF EXISTS magier; "
                                    "CREATE TABLE magier ("
@@ -60,6 +63,15 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    "magi_krav INT"
                                    ")";
     mQuery.exec(createTableQuery4);
+
+    QString createTableQuery5 = "CREATE TABLE IF NOT EXISTS hero_magier ("
+                                "hero_name VARCHAR(255),"
+                                "magi_id INT,"
+                                "PRIMARY KEY (hero_name, magi_id),"
+                                "FOREIGN KEY(hero_name) REFERENCES hero(name),"
+                                "FOREIGN KEY(magi_id) REFERENCES magier(magi_id)"
+                                ")";
+    mQuery.exec(createTableQuery5);
 
     //Liste af grotter laves
     QList<QVariantList> grotter = {
@@ -127,6 +139,14 @@ void Controller::saveHero(){
     mQuery.bindValue(":gold", mHero.getGold());
     mQuery.exec();
 
+    for (int i = 0; i < mHero.getMagi().size(); ++i){
+        int magiId = mHero.getMagi()[i].getID();
+
+    mQuery.prepare("INSERT INTO hero_magier (hero_name, magi_id) "
+                       "VALUES (:hero_name, :magi_id)");
+        mQuery.bindValue(":hero_name", QString::fromStdString(mHero.getName()));
+        mQuery.bindValue(":magi_id", magiId);
+   mQuery.exec();  }
 }
 
 void Controller::printHeroStats(){
@@ -143,6 +163,7 @@ void Controller::printHeroStats(){
 
 //Funktion der loader hero
 void Controller::loadHero(int heroNumber){
+    mHero.deleteMagi();
     //Select der skal returnere alt data på given fjende
     mQuery.prepare("SELECT level, styrke, xp, hp, name, gold FROM hero WHERE id = :heroNumber;");
     mQuery.bindValue(":heroNumber", heroNumber); //Binder id
@@ -166,6 +187,14 @@ void Controller::loadHero(int heroNumber){
             mHero.setGold(gold);
 
         }
+
+    mQuery.prepare("SELECT magi_id FROM hero_magier WHERE hero_name= :heroName;");
+    mQuery.bindValue(":heroName", QString::fromStdString(mHero.getName())); // Example name value
+    mQuery.exec(); //Kører query
+
+    while (mQuery.next()) {
+    mHero.setMagi(mQuery.value("magi_id").toInt());
+    }
 }
 
 //Funktion der printer enemies
@@ -348,11 +377,19 @@ void Controller::magishop(){
         int magivalg{0};
         std::cout << "Indtast valg vha. indeks eller 0 for at returnere" << std::endl;
         std::cin >> magivalg;
+        int statusMagiValg = mHero.buyMagic(magivalg);
+        //std::cout << statusMagiValg << std::endl;
 
-        if (mHero.buyMagic(magivalg) == 0){
+        if (statusMagiValg == 0){
              std::cout << "Du havde ikke guld nok... Du føres tilbage til menu" << std::endl;
         }
-        else {
+        else if (statusMagiValg == 2){
+             std::cout << "Du har allerede denne magi... Du føres tilbage til menu" << std::endl;
+        }
+        else if (statusMagiValg == 3){
+             std::cout << "Du har ikke opfyldt kravene for denne magi... Du føres tilbage til menu" << std::endl;
+        }
+        else if (statusMagiValg == 1){
             std::cout << "Magi tilhøjet til: " << mHero.getName() << std::endl;
         }
 

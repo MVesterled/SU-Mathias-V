@@ -80,20 +80,35 @@ void Hero::setGold(int gold){
     mGold = gold;
 }
 
+//køber magi til Hero
 int Hero::buyMagic(int magic){
     //Select der skal returnere guld_pris på magi
-    mQuery.prepare("SELECT guld_pris FROM magier WHERE magi_id = :magic;");
+    mQuery.prepare("SELECT guld_pris, magi_krav FROM magier WHERE magi_id = :magic;");
     mQuery.bindValue(":magic", magic); //Binder id
     mQuery.exec(); //Kører query
 
     //assigner værdier
     if (mQuery.next()) {
             int guld_pris = mQuery.value("guld_pris").toInt();
-            //std::cout << "Guldpris: " << guld_pris << " mGold: " << mGold << std::endl;
+            int magi_krav = mQuery.value("magi_krav").toInt();
+            //std::cout << "Guldpris: " << guld_pris << " mGold: " << mGold << " magikrav: " << magi_krav << std::endl;
             if (guld_pris > mGold){
                 return 0;
             }
-            else {
+            else { //tjekker om magi haves
+                for (int i = 0; i < mMagi.size(); ++i){
+                    if (mMagi[i].getID() == magic)
+                        return 2;
+                }
+                if (magi_krav > 0){ //tjekker om krav er opfyldt for at må købe magi
+                    for (int i = 0; i < mMagi.size(); ++i){
+                        if (mMagi[i].getID() == magi_krav) {
+                            mMagi.push_back(magic);
+                            Hero::adjustGold(-guld_pris);
+                            return 1;}
+                    }
+                return 3;
+                } //tilføjer magic
                 mMagi.push_back(magic);
                 Hero::adjustGold(-guld_pris);
                 return 1;
@@ -104,8 +119,16 @@ int Hero::buyMagic(int magic){
 
 }
 
+void Hero::setMagi(int magic){
+    mMagi.push_back(magic);
+}
+
 std::vector<Magi> Hero::getMagi() const{
     return mMagi;
+}
+
+void Hero::deleteMagi(){
+    mMagi.clear();
 }
 
 

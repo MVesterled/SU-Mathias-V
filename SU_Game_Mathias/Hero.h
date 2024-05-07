@@ -35,6 +35,8 @@ public:
     int buyMagic(int magic);
 
     std::vector<Magi> getMagi() const;
+    void setMagi(int magic);
+    void deleteMagi();
 
 private:
     unsigned int mXp, mLevel, mGold;

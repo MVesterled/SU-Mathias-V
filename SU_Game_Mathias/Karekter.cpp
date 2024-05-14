@@ -37,7 +37,7 @@ void Karekter::setDamage(unsigned int styrke){
 
 //Funktion der tager skade
 void Karekter::takeDamage(int damage){
-    mHp -= damage;
+    mHp += damage;
     if (mHp < 1){
 
     }

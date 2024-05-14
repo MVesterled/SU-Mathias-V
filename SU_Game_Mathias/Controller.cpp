@@ -264,7 +264,7 @@ int Controller::fight(int enemyNumber){
         //Normalt attack
         if (angrebsstil == 0){
         waitForEnter();
-        mFjende.takeDamage(mHero.getDamage());
+        mFjende.takeDamage(-mHero.getDamage());
         //Tjek om Hero har vundet
         if (!mFjende.isAlive()){ //hvis enemy dør
             std::cout << "Du vandt kampen!" << std::endl << std::endl;
@@ -272,7 +272,7 @@ int Controller::fight(int enemyNumber){
             mHero.addXp((mFjende.getXpGain()));
             return 3;
         }
-        mHero.takeDamage(mFjende.getDamage());
+        mHero.takeDamage(-mFjende.getDamage());
         if (!mHero.isAlive()){ //hvis hero dør
             std::cout << "Du tabte..." << std::endl << std::endl;
             mHero.resetAfterFight();
@@ -282,7 +282,7 @@ int Controller::fight(int enemyNumber){
 
         //Magi attack
         else if (angrebsstil == 1){
-            if (mHero.getMagi().size() > 0){
+            if (mHero.getMagi().size() > 0){ //Hvis spiller har magier
         for (int i = 0; i < mHero.getMagi().size(); ++i){
             std::cout << "MagiID: " << i << " " << "Navn: " << mHero.getMagi()[i].getName() << " " <<
                          "Styrke: " << mHero.getMagi()[i].getStyrke() << " " << "SelvStyrke: " << mHero.getMagi()[i].getSelvStyrke() << " " <<
@@ -294,13 +294,11 @@ int Controller::fight(int enemyNumber){
 
         int styrke = mHero.getMagi()[magiValg].getStyrke(); //henter styrke fra magi
         styrke = styrke * Controller::ElementModifier(mHero.getMagi()[magiValg].getElement(), mFjende.getElement()); //Redigerer styrke efter element
-
+    //Hvis spiller har nok Mana til at udføre magi
        if (mHero.getMana() >= mHero.getMagi()[magiValg].getManaPrice()){
-            //waitForEnter();
-            //std::cout << std::endl;
            mHero.adjustMana(-mHero.getMagi()[magiValg].getManaPrice()); //Bruger mana
-           mFjende.takeDamage(styrke);
-
+           mFjende.takeDamage(-styrke);
+           mHero.takeDamage(-mHero.getMagi()[magiValg].getSelvStyrke());//selvstyrke
         //Tjek om Hero har vundet
         if (!mFjende.isAlive()){ //hvis enemy dør
             std::cout << "Du vandt kampen!" << std::endl << std::endl;
@@ -308,7 +306,7 @@ int Controller::fight(int enemyNumber){
             mHero.addXp((mFjende.getXpGain()));
             return 3;
         }
-        mHero.takeDamage(mFjende.getDamage());
+        mHero.takeDamage(-mFjende.getDamage());
         if (!mHero.isAlive()){ //hvis hero dør
             std::cout << "Du tabte..." << std::endl;
             mHero.resetAfterFight();
@@ -367,21 +365,21 @@ void Controller::setHero(Hero hero){
 void Controller::addMagier(){
     // Liste af magi laves
     QList<QVariantList> magier = {
-        {"FireStrike", 4, 2, 2, "Fire", 750, 0},
-        {"FireWave", 6, 2, 3, "Fire", 500, 1},
+        {"FireStrike", 4, 2, 2, "Fire", 500, 0},
+        {"FireWave", 6, 2, 3, "Fire", 750, 1},
         {"FireBlast", 9, 3, 4, "Fire", 1000, 2},
-        {"EarthStrike", 4, 2, 2, "Earth", 750, 0},
-        {"EarthWave", 6, 2, 3, "Earth", 500, 4},
+        {"EarthStrike", 4, 2, 2, "Earth", 500, 0},
+        {"EarthWave", 6, 2, 3, "Earth", 750, 4},
         {"EarthBlast", 9, 3, 4, "Earth", 1000, 5},
-        {"WaterStrike", 4, 2, 2, "Water", 750, 0},
-        {"WaterWave", 6, 2, 3, "Water", 500, 7},
+        {"WaterStrike", 4, 2, 2, "Water", 500, 0},
+        {"WaterWave", 6, 2, 3, "Water", 750, 7},
         {"WaterBlast", 9, 3, 4, "Water", 1000, 8},
-        {"RegenHP", 0, -5, 2, "Metal", 750, 0},
-        {"Sword", 6, 2, 3, "Metal", 500, 0},
+        {"RegenHP", 0, -5, 2, "Metal", 2000, 0},
+        {"Sword", 6, 2, 3, "Metal", 750, 0},
         {"Whip", 9, 3, 4, "Metal", 1000, 11},
-        {"RegenMana", 0, 0, -5, "Wood", 750, 0},
-        {"RootAttack", 6, 2, 3, "Wood", 500, 0},
-        {"StealHP", 4, -4, 2, "Wood", 1000, 0}
+        {"RegenMana", 0, 0, -5, "Wood", 2000, 0},
+        {"RootAttack", 6, 2, 3, "Wood", 750, 0},
+        {"StealHP", 4, -4, 2, "Wood", 2500, 0}
     };
 
     // SQL statement forberedes

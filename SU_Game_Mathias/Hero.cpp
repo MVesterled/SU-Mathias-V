@@ -45,6 +45,7 @@ void Hero::addLevel(int level){
 //Funktion der gør klar til ny kamp
 void Hero::resetAfterFight(){
     mHp = 10+(mLevel*2-2);
+    mMana = 10+(mLevel*2-2);
 }
 
 
@@ -129,6 +130,13 @@ std::vector<Magi> Hero::getMagi() const{
 
 void Hero::deleteMagi(){
     mMagi.clear();
+}
+
+int Hero::getMana() const{
+    return mMana;
+}
+void Hero::adjustMana(int mana){
+    mMana += mana;
 }
 
 

@@ -38,6 +38,9 @@ public:
     void setMagi(int magic);
     void deleteMagi();
 
+    int getMana() const;
+    void adjustMana(int mana);
+
 private:
     unsigned int mXp, mLevel, mGold;
     int mMana;

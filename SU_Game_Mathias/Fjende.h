@@ -15,8 +15,11 @@ public:
 
     void setEnemyStats(unsigned int enemyIndeks);       //Sætter den valgte enemies stats
 
+    std::string getElement() const;
+
 private:
     unsigned int mXpGain;
+    std::string mElement;
     QSqlQuery mQuery;
 
 };

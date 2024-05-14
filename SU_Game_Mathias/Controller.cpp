@@ -43,6 +43,7 @@ Controller::Controller(Hero hero, Fjende fjende)
                                    "hp INT,"
                                    "styrke INT,"
                                    "grotte_id INT,"
+                                   "element VARCHAR(255),"
                                    "FOREIGN KEY(grotte_id) REFERENCES grotter(grotte_id)"
                                    ")";
     mQuery.exec(createTableQuery3);
@@ -92,7 +93,7 @@ Controller::Controller(Hero hero, Fjende fjende)
 }
 
 void Controller::waitForEnter() {
-    std::cout << "Tryk 'enter' for at slås";
+    std::cout << "Tryk 'enter' for at angribe";
     std::cin.ignore();
     std::cin.get();    // venter på tryk
 }
@@ -210,10 +211,10 @@ void Controller::printEnemies(){
             int xpGain = mQuery.value(2).toInt();
             int hp = mQuery.value(3).toInt();
             int styrke = mQuery.value(4).toInt();
+            QString element = mQuery.value(6).toString();
 
 
-
-            qDebug() << "Id:" << id << "Navn:" << name << "Styrke:" << styrke << "XP_Gain:" << xpGain << "HP:" << hp;
+            qDebug() << "Id:" << id << "Navn:" << name << "Styrke:" << styrke << "XP_Gain:" << xpGain << "HP:" << hp << "Element:" << element;
         }
 }
 
@@ -221,18 +222,18 @@ void Controller::printEnemies(){
 void Controller::addEmemies(){
     //Liste af enemies laves
     QList<QVariantList> enemies = {
-            {"Cat", 100, 2, 1, 1},
-            {"Child", 200, 4, 1, 1},
-            {"Small Goblin", 300, 5, 1, 1},
-            {"Medium Goblin", 400, 7, 1, 2},
-            {"Cow", 500, 8, 2, 2},
-            {"Wizard", 700, 20, 3, 2},
-            {"Giant", 1200, 20, 4, 3},
-            {"Dragon", 3000, 50, 8, 3},
-            {"Fire-Dragon", 5000, 80, 10, 3}};
+            {"Cat", 100, 2, 1, 1, "Wood"},
+            {"Child", 200, 4, 1, 1, "Earth"},
+            {"Small Goblin", 300, 5, 1, 1, "Water"},
+            {"Medium Goblin", 400, 7, 1, 2, "Metal"},
+            {"Cow", 500, 8, 2, 2, "Wood"},
+            {"Wizard", 700, 20, 3, 2, "Fire"},
+            {"Giant", 1200, 20, 4, 3, "Metal"},
+            {"Dragon", 3000, 50, 8, 3, "Fire"},
+            {"Fire-Dragon", 5000, 80, 10, 3, "Fire"}};
 
        //SQL statement forberedes
-        mQuery.prepare("INSERT INTO enemies (name, xp_gain, hp, styrke, grotte_id) VALUES (:name, :xp_gain, :hp, :styrke, :grotte_id)");
+        mQuery.prepare("INSERT INTO enemies (name, xp_gain, hp, styrke, grotte_id, element) VALUES (:name, :xp_gain, :hp, :styrke, :grotte_id, :element)");
 
         // Ranged based for loop der sætter ind i tabel
         for (const auto& enemy : enemies) {
@@ -241,6 +242,7 @@ void Controller::addEmemies(){
             mQuery.bindValue(":hp", enemy[2]);
             mQuery.bindValue(":styrke", enemy[3]);
             mQuery.bindValue(":grotte_id", enemy[4]);
+            mQuery.bindValue(":element", enemy[5]);
             mQuery.exec();
         }
 
@@ -248,11 +250,19 @@ void Controller::addEmemies(){
 
 //funktion der håndterer en kamp mellem fjende og hero
 int Controller::fight(int enemyNumber){
+    int angrebsstil{0};
+    int magiValg{0};
     mFjende.setEnemyStats(enemyNumber);
     //så længe en karekter er i live kan de slås:
     while (mHero.isAlive() && mFjende.isAlive()){
-        std::cout << "Hero: " << mHero.getName() << " har hp: " << mHero.getHp() << std::endl;
+        std::cout << "Hero: " << mHero.getName() << " har hp: " << mHero.getHp() << " mana: " << mHero.getMana() << std::endl;
         std::cout << "Fjende: " << mFjende.getName() << " har hp: " << mFjende.getHp() << std::endl;
+        std::cout << "Vælg angrebsform:" << std::endl << "(0) - Angreb med normalt slag / styrke" << std::endl
+                  << "(1) - Angreb med magi" << std::endl;
+        std::cin >> angrebsstil;
+        std::cout << std::endl;
+        //Normalt attack
+        if (angrebsstil == 0){
         waitForEnter();
         mFjende.takeDamage(mHero.getDamage());
         //Tjek om Hero har vundet
@@ -268,6 +278,45 @@ int Controller::fight(int enemyNumber){
             mHero.resetAfterFight();
             return 99;
     }
+        }
+
+        //Magi attack
+        else if (angrebsstil == 1){
+            if (mHero.getMagi().size() > 0){
+        for (int i = 0; i < mHero.getMagi().size(); ++i){
+            std::cout << "MagiID: " << i << " " << "Navn: " << mHero.getMagi()[i].getName() << " " <<
+                         "Styrke: " << mHero.getMagi()[i].getStyrke() << " " << "SelvStyrke: " << mHero.getMagi()[i].getSelvStyrke() << " " <<
+                         "ManaPris: " << mHero.getMagi()[i].getManaPrice() << " " << "Element: " << mHero.getMagi()[i].getElement() << std::endl;
+            }
+            std::cout << "Vælg magi efter indeks:" << std::endl;
+            std::cin >> magiValg;
+            std::cout << std::endl;
+
+        int styrke = mHero.getMagi()[magiValg].getStyrke(); //henter styrke fra magi
+        styrke = styrke * Controller::ElementModifier(mHero.getMagi()[magiValg].getElement(), mFjende.getElement()); //Redigerer styrke efter element
+
+       if (mHero.getMana() >= mHero.getMagi()[magiValg].getManaPrice()){
+            //waitForEnter();
+            //std::cout << std::endl;
+           mHero.adjustMana(-mHero.getMagi()[magiValg].getManaPrice()); //Bruger mana
+           mFjende.takeDamage(styrke);
+
+        //Tjek om Hero har vundet
+        if (!mFjende.isAlive()){ //hvis enemy dør
+            std::cout << "Du vandt kampen!" << std::endl << std::endl;
+            mHero.resetAfterFight();
+            mHero.addXp((mFjende.getXpGain()));
+            return 3;
+        }
+        mHero.takeDamage(mFjende.getDamage());
+        if (!mHero.isAlive()){ //hvis hero dør
+            std::cout << "Du tabte..." << std::endl;
+            mHero.resetAfterFight();
+            return 99;
+    }}
+       else {std::cout << std::endl << "Ikke mana nok... vælg igen" << std::endl << std::endl;}
+        } else {std::cout << "Ingen magier... prøv igen" << std::endl << std::endl;} }
+
 }
     return -1;
 }
@@ -318,9 +367,9 @@ void Controller::setHero(Hero hero){
 void Controller::addMagier(){
     // Liste af magi laves
     QList<QVariantList> magier = {
-        {"FireStrike", 4, 2, 2, "ild", 750, 0},
-        {"FireWave", 6, 2, 3, "ild", 500, 1},
-        {"FireBlast", 9, 3, 4, "ild", 1000, 2},
+        {"FireStrike", 4, 2, 2, "Fire", 750, 0},
+        {"FireWave", 6, 2, 3, "Fire", 500, 1},
+        {"FireBlast", 9, 3, 4, "Fire", 1000, 2},
         {"EarthStrike", 4, 2, 2, "Earth", 750, 0},
         {"EarthWave", 6, 2, 3, "Earth", 500, 4},
         {"EarthBlast", 9, 3, 4, "Earth", 1000, 5},
@@ -394,4 +443,22 @@ void Controller::magishop(){
         }
 
 
+}
+
+//Funktion der returnere modifier alt efter elementtype
+//Retunerer 0 hvis elementer ikke er relateret, 1 hvis der skal skades mere, 2 hvis der skal skades mindre
+double Controller::ElementModifier(const std::string& elementHero, const std::string& elementFjende){
+    //Håndterer hvis noget er stærk i forhold til andet
+    if (elementHero == "Water" && elementFjende == "Fire") {return 2;}
+    else if (elementHero == "Fire" && elementFjende == "Metal") {return 2;}
+    else if (elementHero == "Wood" && elementFjende == "Earth") {return 2;}
+    else if (elementHero == "Earth" && elementFjende == "Metal") {return 2;}
+    else if (elementHero == "Metal" && elementFjende == "Vand") {return 2;}
+    //Håndtere hvis noget er svagt:
+    else if (elementHero == "Water" && elementFjende == "Earth") {return 0.5;}
+    else if (elementHero == "Fire" && elementFjende == "Water") {return 0.5;}
+    else if (elementHero == "Wood" && elementFjende == "Fire") {return 0.5;}
+    else if (elementHero == "Earth" && elementFjende == "Wood") {return 0.5;}
+    else if (elementHero == "Metal" && elementFjende == "Wood") {return 0.5;}
+    else {return 1;}
 }

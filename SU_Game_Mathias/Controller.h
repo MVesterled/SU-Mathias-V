@@ -38,6 +38,8 @@ public:
 
     void magishop();
 
+    double ElementModifier(const std::string& elementHero, const std::string& elementFjende);
+
 private:
     Hero mHero;
     Fjende mFjende;

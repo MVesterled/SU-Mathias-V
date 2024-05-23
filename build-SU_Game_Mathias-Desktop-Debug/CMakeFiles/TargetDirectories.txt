@@ -1,0 +1,4 @@
+/home/sammy/build-SU_Game_Mathias-Desktop-Debug/CMakeFiles/SU_Game_Mathias.dir
+/home/sammy/build-SU_Game_Mathias-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/sammy/build-SU_Game_Mathias-Desktop-Debug/CMakeFiles/rebuild_cache.dir
+/home/sammy/build-SU_Game_Mathias-Desktop-Debug/CMakeFiles/SU_Game_Mathias_autogen.dir
